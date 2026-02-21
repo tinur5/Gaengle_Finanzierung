@@ -239,16 +239,11 @@ const Dashboard = () => {
         {/* SECTION 3: Finanzierungs-Parameter */}
         <div className="bg-white rounded-lg shadow-lg p-8 mb-12 border-2 border-gray-300">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Finanzierungs-Parameter</h2>
+          <div className="mb-6 p-4 bg-blue-50 border-2 border-blue-300 rounded-lg">
+            <p className="text-sm font-bold text-gray-900">Kaufpreis (automatisch berechnet):</p>
+            <p className="text-2xl font-bold text-blue-600">{kaufpreis.toLocaleString('de-CH', { maximumFractionDigits: 0 })} CHF</p>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div>
-              <label className="block text-sm font-bold text-gray-900 mb-2">Kaufpreis (CHF)</label>
-              <input
-                type="number"
-                value={kaufpreis}
-                onChange={(e) => setKaufpreis(Number(e.target.value))}
-                className="w-full px-4 py-2 border-2 border-gray-400 rounded-lg text-gray-900 font-semibold focus:outline-none focus:border-blue-600"
-              />
-            </div>
             <div>
               <label className="block text-sm font-bold text-gray-900 mb-2">Zinssatz (%)</label>
               <input
