@@ -31,9 +31,8 @@ const COLORS = ['#3b82f6', '#10b981', '#f59e0b'];
 const Dashboard = () => {
   const [costPositions, setCostPositions] = useState<CostItem[]>([]);
   const [kaufpreis, setKaufpreis] = useState(6566232);
-  const [eigenkapital, setEigenkapital] = useState(2500000);
-  const [zinssatz, setZinssatz] = useState(1.5);
-  const [amortisationJahre, setAmortisationJahre] = useState(25);
+  const [zinssatz, setZinssatz] = useState(0.8);
+  const [amortisationsrate, setAmortisationsrate] = useState(1);
   
   // Nebenkosten pro Partei (monatlich)
   const [nebenKostenWetli, setNebenKostenWetli] = useState(150);
@@ -79,7 +78,8 @@ const Dashboard = () => {
   const totalCost = kaufpreis;
 
   // Hypothek berechnen
-  const hypoCHF = kaufpreis - eigenkapital;
+  const hypoCHF = kaufpreis;
+  const amortisationJahre = amortisationsrate > 0 ? 100 / amortisationsrate : 100;
   const monatlicheHypothek = hypoCHF > 0 ? (hypoCHF / amortisationJahre) / 12 + (hypoCHF * (zinssatz / 100)) / 12 : 0;
 
   // Monatliche Kosten pro Partei
@@ -237,7 +237,7 @@ const Dashboard = () => {
 
         {/* SECTION 3: Finanzierungs-Parameter */}
         <div className="bg-white rounded-lg shadow-lg p-8 mb-12 border-2 border-gray-300">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">Finanzierungs-Parameter</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Finanzierungs-Parameter</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div>
               <label className="block text-sm font-bold text-gray-900 mb-2">Kaufpreis (CHF)</label>
@@ -245,15 +245,6 @@ const Dashboard = () => {
                 type="number"
                 value={kaufpreis}
                 onChange={(e) => setKaufpreis(Number(e.target.value))}
-                className="w-full px-4 py-2 border-2 border-gray-400 rounded-lg focus:outline-none focus:border-blue-600"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-bold text-gray-900 mb-2">Eigenkapital (CHF)</label>
-              <input
-                type="number"
-                value={eigenkapital}
-                onChange={(e) => setEigenkapital(Number(e.target.value))}
                 className="w-full px-4 py-2 border-2 border-gray-400 rounded-lg focus:outline-none focus:border-blue-600"
               />
             </div>
@@ -268,25 +259,24 @@ const Dashboard = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-bold text-gray-900 mb-2">Amortisationsjahre</label>
+              <label className="block text-sm font-bold text-gray-900 mb-2">Amortisationsrate (% pro Jahr)</label>
               <input
                 type="number"
-                value={amortisationJahre}
-                onChange={(e) => setAmortisationJahre(Number(e.target.value))}
+                step="0.1"
+                min="0.1"
+                value={amortisationsrate}
+                onChange={(e) => setAmortisationsrate(Number(e.target.value))}
                 className="w-full px-4 py-2 border-2 border-gray-400 rounded-lg focus:outline-none focus:border-blue-600"
               />
+              <p className="text-xs text-gray-900 mt-1">Amortisationsjahre: {Math.round(amortisationJahre)}</p>
             </div>
           </div>
 
           {/* Berechnete Werte */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div className="bg-blue-50 rounded-lg p-4 border-2 border-blue-400">
-              <p className="text-xs font-bold text-gray-900">Hypothek</p>
+              <p className="text-xs font-bold text-gray-900">Hypothek (Kaufpreis)</p>
               <p className="text-2xl font-bold text-blue-600">{formatCurrency(hypoCHF)}</p>
-            </div>
-            <div className="bg-green-50 rounded-lg p-4 border-2 border-green-400">
-              <p className="text-xs font-bold text-gray-900">Eigenkapitalquote</p>
-              <p className="text-2xl font-bold text-green-600">{((eigenkapital / kaufpreis) * 100).toFixed(1)}%</p>
             </div>
             <div className="bg-blue-50 rounded-lg p-4 border-2 border-blue-400">
               <p className="text-xs font-bold text-gray-900">Monatliche Hypothek</p>
@@ -296,7 +286,7 @@ const Dashboard = () => {
 
           {/* Nebenkosten pro Partei */}
           <div className="bg-gradient-to-br from-gray-50 to-white rounded-lg p-6 border-2 border-gray-400">
-            <h3 className="text-lg font-bold text-gray-800 mb-4">Nebenkosten (monatlich pro Partei)</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-4\">Nebenkosten (monatlich pro Partei)</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
                 <label className="block text-sm font-bold text-gray-900 mb-2">Wetli (CHF/Monat)</label>
