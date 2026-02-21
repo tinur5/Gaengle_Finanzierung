@@ -133,7 +133,7 @@ const Dashboard = () => {
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
         <div className="max-w-7xl mx-auto">
           <div className="bg-white rounded-lg shadow-lg p-8 text-center">
-            <p className="text-gray-600 mb-4">Laden der Daten...</p>
+            <p className="text-gray-900 mb-4">Laden der Daten...</p>
           </div>
         </div>
       </div>
@@ -146,7 +146,7 @@ const Dashboard = () => {
         {/* Titel */}
         <div className="mb-12 text-center">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Gängle Finanzierung</h1>
-          <p className="text-gray-600">Finanzierungsrechner für 3er-Stockwerkeigentum</p>
+          <p className="text-gray-900">Finanzierungsrechner für 3er-Stockwerkeigentum</p>
         </div>
 
         {/* SECTION 1: Immobilienwert-Übersicht */}
@@ -155,15 +155,15 @@ const Dashboard = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
             <div>
               <div className="bg-blue-50 rounded-lg p-4 mb-4 border-2 border-blue-400">
-                <p className="text-xs font-bold text-gray-600">Wetli</p>
+                <p className="text-xs font-bold text-gray-900">Wetli</p>
                 <p className="text-2xl font-bold text-blue-600">{formatCurrency(totalWetli)}</p>
               </div>
               <div className="bg-green-50 rounded-lg p-4 mb-4 border-2 border-green-400">
-                <p className="text-xs font-bold text-gray-600">Graf</p>
+                <p className="text-xs font-bold text-gray-900">Graf</p>
                 <p className="text-2xl font-bold text-green-600">{formatCurrency(totalGraf)}</p>
               </div>
               <div className="bg-amber-50 rounded-lg p-4 border-2 border-amber-400">
-                <p className="text-xs font-bold text-gray-600">Bürzle</p>
+                <p className="text-xs font-bold text-gray-900">Bürzle</p>
                 <p className="text-2xl font-bold text-amber-600">{formatCurrency(totalBürzle)}</p>
               </div>
             </div>
@@ -189,7 +189,7 @@ const Dashboard = () => {
             </div>
           </div>
           <div className="bg-gradient-to-r from-blue-50 to-amber-50 rounded-lg p-6 border-2 border-gray-400">
-            <p className="text-sm font-bold text-gray-600 mb-1">Gesamtimmobilienwert</p>
+            <p className="text-sm font-bold text-gray-900 mb-1">Gesamtimmobilienwert</p>
             <p className="text-3xl font-bold text-gray-900">{formatCurrency(totalCost)}</p>
           </div>
         </div>
@@ -201,12 +201,12 @@ const Dashboard = () => {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-gray-200 border-b-2 border-gray-400">
-                  <th className="text-left p-3 font-bold">Pos.</th>
-                  <th className="text-left p-3 font-bold">Beschreibung</th>
-                  <th className="text-right p-3 font-bold">Total</th>
-                  <th className="text-right p-3 font-bold bg-blue-100">Wetli</th>
-                  <th className="text-right p-3 font-bold bg-green-100">Graf</th>
-                  <th className="text-right p-3 font-bold bg-amber-100">Bürzle</th>
+                  <th className="text-left p-3 font-bold text-gray-900">Pos.</th>
+                  <th className="text-left p-3 font-bold text-gray-900">Beschreibung</th>
+                  <th className="text-right p-3 font-bold text-gray-900">Total</th>
+                  <th className="text-right p-3 font-bold text-gray-900 bg-blue-100">Wetli</th>
+                  <th className="text-right p-3 font-bold text-gray-900 bg-green-100">Graf</th>
+                  <th className="text-right p-3 font-bold text-gray-900 bg-amber-100">Bürzle</th>
                 </tr>
               </thead>
               <tbody>
@@ -237,7 +237,7 @@ const Dashboard = () => {
           <h2 className="text-2xl font-bold text-gray-800 mb-6">Finanzierungs-Parameter</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2">Kaufpreis (CHF)</label>
+              <label className="block text-sm font-bold text-gray-900 mb-2">Kaufpreis (CHF)</label>
               <input
                 type="number"
                 value={kaufpreis}
@@ -246,7 +246,7 @@ const Dashboard = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2">Eigenkapital (CHF)</label>
+              <label className="block text-sm font-bold text-gray-900 mb-2">Eigenkapital (CHF)</label>
               <input
                 type="number"
                 value={eigenkapital}
@@ -255,7 +255,7 @@ const Dashboard = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2">Zinssatz (%)</label>
+              <label className="block text-sm font-bold text-gray-900 mb-2">Zinssatz (%)</label>
               <input
                 type="number"
                 step="0.1"
@@ -265,7 +265,7 @@ const Dashboard = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2">Amortisationsjahre</label>
+              <label className="block text-sm font-bold text-gray-900 mb-2">Amortisationsjahre</label>
               <input
                 type="number"
                 value={amortisationJahre}
@@ -278,15 +278,15 @@ const Dashboard = () => {
           {/* Berechnete Werte */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <div className="bg-blue-50 rounded-lg p-4 border-2 border-blue-400">
-              <p className="text-xs font-bold text-gray-600">Hypothek</p>
+              <p className="text-xs font-bold text-gray-900">Hypothek</p>
               <p className="text-2xl font-bold text-blue-600">{formatCurrency(hypoCHF)}</p>
             </div>
             <div className="bg-green-50 rounded-lg p-4 border-2 border-green-400">
-              <p className="text-xs font-bold text-gray-600">Eigenkapitalquote</p>
+              <p className="text-xs font-bold text-gray-900">Eigenkapitalquote</p>
               <p className="text-2xl font-bold text-green-600">{((eigenkapital / kaufpreis) * 100).toFixed(1)}%</p>
             </div>
             <div className="bg-blue-50 rounded-lg p-4 border-2 border-blue-400">
-              <p className="text-xs font-bold text-gray-600">Monatliche Hypothek</p>
+              <p className="text-xs font-bold text-gray-900">Monatliche Hypothek</p>
               <p className="text-2xl font-bold text-blue-600">{formatCurrency(monatlicheHypothek)}</p>
             </div>
           </div>
@@ -296,36 +296,36 @@ const Dashboard = () => {
             <h3 className="text-lg font-bold text-gray-800 mb-4">Nebenkosten (monatlich pro Partei)</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
-                <label className="block text-sm font-bold text-blue-600 mb-2">Wetli (CHF/Monat)</label>
+                <label className="block text-sm font-bold text-gray-900 mb-2">Wetli (CHF/Monat)</label>
                 <input
                   type="number"
                   value={nebenKostenWetli}
                   onChange={(e) => setNebenKostenWetli(Number(e.target.value))}
                   className="w-full px-4 py-2 border-2 border-blue-400 bg-blue-50 text-gray-900 font-semibold rounded-lg focus:border-blue-600 focus:outline-none"
                 />
-                <p className="text-xs text-gray-600 mt-2">Jährlich: {formatCurrency(nebenKostenWetli * 12)}</p>
+                <p className="text-xs text-gray-900 mt-2">Jährlich: {formatCurrency(nebenKostenWetli * 12)}</p>
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-green-600 mb-2">Graf (CHF/Monat)</label>
+                <label className="block text-sm font-bold text-gray-900 mb-2">Graf (CHF/Monat)</label>
                 <input
                   type="number"
                   value={nebenKostenGraf}
                   onChange={(e) => setNebenKostenGraf(Number(e.target.value))}
                   className="w-full px-4 py-2 border-2 border-green-400 bg-green-50 text-gray-900 font-semibold rounded-lg focus:border-green-600 focus:outline-none"
                 />
-                <p className="text-xs text-gray-600 mt-2">Jährlich: {formatCurrency(nebenKostenGraf * 12)}</p>
+                <p className="text-xs text-gray-900 mt-2">Jährlich: {formatCurrency(nebenKostenGraf * 12)}</p>
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-amber-600 mb-2">Bürzle (CHF/Monat)</label>
+                <label className="block text-sm font-bold text-gray-900 mb-2">Bürzle (CHF/Monat)</label>
                 <input
                   type="number"
                   value={nebenKostenBürzle}
                   onChange={(e) => setNebenKostenBürzle(Number(e.target.value))}
                   className="w-full px-4 py-2 border-2 border-amber-400 bg-amber-50 text-gray-900 font-semibold rounded-lg focus:border-amber-600 focus:outline-none"
                 />
-                <p className="text-xs text-gray-600 mt-2">Jährlich: {formatCurrency(nebenKostenBürzle * 12)}</p>
+                <p className="text-xs text-gray-900 mt-2">Jährlich: {formatCurrency(nebenKostenBürzle * 12)}</p>
               </div>
             </div>
           </div>
@@ -338,15 +338,15 @@ const Dashboard = () => {
             <div className="bg-blue-50 rounded-lg p-6 border-2 border-blue-400">
               <h3 className="text-sm font-bold text-blue-600 mb-3">WETLI</h3>
               <div className="mb-4">
-                <p className="text-xs text-gray-600">Hypothek anteil:</p>
+                <p className="text-xs text-gray-900">Hypothek anteil:</p>
                 <p className="text-lg font-bold text-blue-600">{formatCurrency((monatlicheHypothek * (totalWetli / totalCost)))}</p>
               </div>
               <div className="mb-4 pb-4 border-b-2 border-blue-300">
-                <p className="text-xs text-gray-600">Nebenkosten:</p>
+                <p className="text-xs text-gray-900">Nebenkosten:</p>
                 <p className="text-lg font-bold text-blue-600">{formatCurrency(nebenKostenWetli)}</p>
               </div>
               <div>
-                <p className="text-xs text-gray-600 mb-1">Total monatlich:</p>
+                <p className="text-xs text-gray-900 mb-1">Total monatlich:</p>
                 <p className="text-2xl font-bold text-blue-700">{formatCurrency(monatlichWetli)}</p>
               </div>
             </div>
@@ -354,15 +354,15 @@ const Dashboard = () => {
             <div className="bg-green-50 rounded-lg p-6 border-2 border-green-400">
               <h3 className="text-sm font-bold text-green-600 mb-3">GRAF</h3>
               <div className="mb-4">
-                <p className="text-xs text-gray-600">Hypothek anteil:</p>
+                <p className="text-xs text-gray-900">Hypothek anteil:</p>
                 <p className="text-lg font-bold text-green-600">{formatCurrency((monatlicheHypothek * (totalGraf / totalCost)))}</p>
               </div>
               <div className="mb-4 pb-4 border-b-2 border-green-300">
-                <p className="text-xs text-gray-600">Nebenkosten:</p>
+                <p className="text-xs text-gray-900">Nebenkosten:</p>
                 <p className="text-lg font-bold text-green-600">{formatCurrency(nebenKostenGraf)}</p>
               </div>
               <div>
-                <p className="text-xs text-gray-600 mb-1">Total monatlich:</p>
+                <p className="text-xs text-gray-900 mb-1">Total monatlich:</p>
                 <p className="text-2xl font-bold text-green-700">{formatCurrency(monatlichGraf)}</p>
               </div>
             </div>
@@ -370,15 +370,15 @@ const Dashboard = () => {
             <div className="bg-amber-50 rounded-lg p-6 border-2 border-amber-400">
               <h3 className="text-sm font-bold text-amber-600 mb-3">BÜRZLE</h3>
               <div className="mb-4">
-                <p className="text-xs text-gray-600">Hypothek anteil:</p>
+                <p className="text-xs text-gray-900">Hypothek anteil:</p>
                 <p className="text-lg font-bold text-amber-600">{formatCurrency((monatlicheHypothek * (totalBürzle / totalCost)))}</p>
               </div>
               <div className="mb-4 pb-4 border-b-2 border-amber-300">
-                <p className="text-xs text-gray-600">Nebenkosten:</p>
+                <p className="text-xs text-gray-900">Nebenkosten:</p>
                 <p className="text-lg font-bold text-amber-600">{formatCurrency(nebenKostenBürzle)}</p>
               </div>
               <div>
-                <p className="text-xs text-gray-600 mb-1">Total monatlich:</p>
+                <p className="text-xs text-gray-900 mb-1">Total monatlich:</p>
                 <p className="text-2xl font-bold text-amber-700">{formatCurrency(monatlichBürzle)}</p>
               </div>
             </div>
@@ -391,7 +391,7 @@ const Dashboard = () => {
           
           {/* LineChart Grafik */}
           <div className="bg-gray-50 rounded-lg p-6 mb-8 border border-gray-300">
-            <h3 className="text-lg font-bold text-gray-700 mb-4">Kostentrend Grafik</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-4">Kostentrend Grafik</h3>
             <ResponsiveContainer width="100%" height={500}>
               <LineChart 
                 data={costForecast} 
@@ -456,16 +456,16 @@ const Dashboard = () => {
 
           {/* Detaillierte Tabelle */}
           <div className="mb-8">
-            <h3 className="text-lg font-bold text-gray-700 mb-4">Monatliche Kosten nach Jahren</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-4">Monatliche Kosten nach Jahren</h3>
             <div className="overflow-y-auto max-h-96 border-2 border-gray-300 rounded-lg">
               <table className="w-full text-sm">
                 <thead className="sticky top-0 bg-gray-300 border-b-2 border-gray-400">
                   <tr>
-                    <th className="text-left p-3 font-bold">Jahr</th>
-                    <th className="text-right p-3 font-bold bg-blue-100">Wetli (CHF)</th>
-                    <th className="text-right p-3 font-bold bg-green-100">Graf (CHF)</th>
-                    <th className="text-right p-3 font-bold bg-amber-100">Bürzle (CHF)</th>
-                    <th className="text-right p-3 font-bold bg-gray-200">Total (CHF)</th>
+                    <th className="text-left p-3 font-bold text-gray-900">Jahr</th>
+                    <th className="text-right p-3 font-bold text-gray-900 bg-blue-100">Wetli (CHF)</th>
+                    <th className="text-right p-3 font-bold text-gray-900 bg-green-100">Graf (CHF)</th>
+                    <th className="text-right p-3 font-bold text-gray-900 bg-amber-100">Bürzle (CHF)</th>
+                    <th className="text-right p-3 font-bold text-gray-900 bg-gray-200">Total (CHF)</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -486,7 +486,7 @@ const Dashboard = () => {
           {/* Erklärung */}
           <div className="bg-gradient-to-r from-blue-50 via-green-50 to-amber-50 rounded-lg p-6 border-2 border-gray-400">
             <h3 className="font-bold text-gray-800 mb-2">📊 Erklärung der Grafik und Tabelle:</h3>
-            <ul className="text-sm text-gray-700 space-y-2 list-disc list-inside">
+            <ul className="text-sm text-gray-900 space-y-2 list-disc list-inside">
               <li><strong>Grafik:</strong> Zeigt visuell, wie die monatlichen Kosten pro Partei über 50 Jahre sinken</li>
               <li><strong>Sinkender Trend:</strong> Die Kosten fallen, weil die Hypothek durch Amortisation abgebaut wird</li>
               <li><strong>Nebenkosten-Basis:</strong> Die Mindestkosten sind die monatlichen Nebenkosten</li>
@@ -497,7 +497,7 @@ const Dashboard = () => {
         </div>
 
         {/* Footer */}
-        <div className="text-center text-gray-600 text-sm mt-12">
+        <div className="text-center text-gray-900 text-sm mt-12">
           <p>Gängle Finanzierung © 2024 - Alle Angaben ohne Gewähr</p>
         </div>
       </div>
