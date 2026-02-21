@@ -409,8 +409,8 @@ const Dashboard = () => {
                   width={70}
                 />
                 <Tooltip
-                  formatter={(value: number) => formatCurrency(value)}
-                  labelFormatter={(label: number) => `Jahr ${label}`}
+                  formatter={(value: any) => formatCurrency(Number(value))}
+                  labelFormatter={(label: any) => `Jahr ${label}`}
                   contentStyle={{
                     backgroundColor: '#ffffff',
                     border: '2px solid #333',
