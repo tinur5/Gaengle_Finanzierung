@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gängle Finanzierung - Setup Anleitung</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .status {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .status-card {
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid;
+        }
+        
+        .status-card.done {
+            background: #d4edda;
+            border-left-color: #28a745;
+            color: #155724;
+        }
+        
+        .status-card.pending {
+            background: #fff3cd;
+            border-left-color: #ffc107;
+            color: #856404;
+        }
+        
+        .status-card h3 {
+            margin-bottom: 10px;
+        }
+        
+        .status-card p {
+            font-size: 0.9em;
+        }
+        
+        h2 {
+            color: #667eea;
+            margin: 30px 0 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+        }
+        
+        .code-block {
+            background: #f5f5f5;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 15px 0;
+            overflow-x: auto;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        .code-block code {
+            color: #d63384;
+        }
+        
+        .step {
+            margin: 20px 0;
+            padding-left: 30px;
+            position: relative;
+        }
+        
+        .step:before {
+            content: attr(data-step);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: #667eea;
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        
+        .warning {
+            background: #ffe5e5;
+            border-left: 4px solid #ff6b6b;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 15px 0;
+        }
+        
+        .success {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 15px 0;
+        }
+        
+        .info {
+            background: #cfe9ff;
+            border-left: 4px solid #0066cc;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 15px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        table th {
+            background: #f8f9fa;
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+            border-bottom: 2px solid #dee2e6;
+        }
+        
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid #dee2e6;
+            color: #666;
+        }
+        
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .tech-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            text-align: center;
+            border: 1px solid #dee2e6;
+        }
+        
+        .tech-item strong {
+            display: block;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .link-btn {
+            padding: 15px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            text-align: center;
+            transition: background 0.3s;
+        }
+        
+        .link-btn:hover {
+            background: #764ba2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏠 Gängle Finanzierung</h1>
+            <p>Setup & Deployment Anleitung</p>
+        </header>
+        
+        <div class="content">
+            <!-- Status Overview -->
+            <div class="status">
+                <div class="status-card done">
+                    <h3>✓ Lokal erstellt</h3>
+                    <p>Next.js App mit Dashboard</p>
+                </div>
+                <div class="status-card done">
+                    <h3>✓ Build erfolgreich</h3>
+                    <p>Production-ready</p>
+                </div>
+                <div class="status-card pending">
+                    <h3>⏳ GitHub Upload</h3>
+                    <p>Noch zu tun</p>
+                </div>
+                <div class="status-card pending">
+                    <h3>⏳ Vercel Deploy</h3>
+                    <p>Noch zu tun</p>
+                </div>
+            </div>
+            
+            <!-- Tech Stack -->
+            <h2>📚 Technologie-Stack</h2>
+            <div class="tech-stack">
+                <div class="tech-item">
+                    <strong>Next.js 16</strong>
+                    <p>React Framework</p>
+                </div>
+                <div class="tech-item">
+                    <strong>Tailwind CSS</strong>
+                    <p>Styling</p>
+                </div>
+                <div class="tech-item">
+                    <strong>Recharts</strong>
+                    <p>Datenvisualisierung</p>
+                </div>
+                <div class="tech-item">
+                    <strong>TypeScript</strong>
+                    <p>Type Safety</p>
+                </div>
+            </div>
+            
+            <!-- GitHub Setup -->
+            <div class="section">
+                <h2>📦 Schritt 1: GitHub Upload</h2>
+                
+                <div class="step" data-step="1">
+                    <strong>Neues Repository auf GitHub erstellen</strong>
+                    <p>Gehe zu <a href="https://github.com/new" target="_blank">github.com/new</a></p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>Repository Name: <code>ganglefinanzierung</code></li>
+                        <li>Beschreibung: "Finanzierungsvisualisierung für 3-Parteien Stockwerkeigentum"</li>
+                        <li>Public oder Private (nach Wunsch)</li>
+                        <li>Klicke "Create repository"</li>
+                    </ul>
+                </div>
+                
+                <div class="step" data-step="2">
+                    <strong>Remote hinzufügen und Code hochladen</strong>
+                    <p>Öffne PowerShell und führe folgende Befehle aus:</p>
+                    
+                    <div class="code-block">
+cd "c:\Users\tinur\OneDrive\Hausbauen\Stockwerkeigentum_Finanzierung\ganglefinanzierung"
+
+# Remote hinzufügen (ersetze YOUR_USERNAME durch deinen GitHub Username)
+git remote add origin https://github.com/YOUR_USERNAME/ganglefinanzierung.git
+
+# Branch umbenennen falls nötig
+git branch -M main
+
+# Code hochladen
+git push -u origin main
+                    </div>
+                    
+                    <div class="info">
+                        <strong>ℹ️ Info:</strong> Du wirst aufgefordert dich einzuloggen oder einen Personal Access Token zu verwenden.
+                    </div>
+                </div>
+                
+                <div class="success">
+                    <strong>✓ Erfolg!</strong> Der Code ist jetzt auf GitHub verfügbar unter:
+                    <code>https://github.com/YOUR_USERNAME/ganglefinanzierung</code>
+                </div>
+            </div>
+            
+            <!-- Vercel Deployment -->
+            <div class="section">
+                <h2>🚀 Schritt 2: Vercel Deployment</h2>
+                
+                <div class="step" data-step="1">
+                    <strong>Vercel Projekt erstellen</strong>
+                    <ol style="margin-left: 20px;">
+                        <li>Gehe zu <a href="https://vercel.com" target="_blank">vercel.com</a></li>
+                        <li>Melde dich an oder registriere dich</li>
+                        <li>Klicke "New Project"</li>
+                    </ol>
+                </div>
+                
+                <div class="step" data-step="2">
+                    <strong>GitHub Repository verbinden</strong>
+                    <ol style="margin-left: 20px;">
+                        <li>Wähle "Import Git Repository"</li>
+                        <li>Verbinde dein GitHub-Konto wenn nötig</li>
+                        <li>Suche nach "ganglefinanzierung" und wähle es</li>
+                    </ol>
+                </div>
+                
+                <div class="step" data-step="3">
+                    <strong>Build-Einstellungen überprüfen</strong>
+                    <p>Vercel erkennt Next.js automatisch. Die Einstellungen sollten so aussehen:</p>
+                    
+                    <table>
+                        <tr>
+                            <th>Feld</th>
+                            <th>Wert</th>
+                        </tr>
+                        <tr>
+                            <td>Framework Preset</td>
+                            <td>Next.js</td>
+                        </tr>
+                        <tr>
+                            <td>Build Command</td>
+                            <td>npm run build</td>
+                        </tr>
+                        <tr>
+                            <td>Output Directory</td>
+                            <td>.next</td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <div class="step" data-step="4">
+                    <strong>Deployment starten</strong>
+                    <p>Klicke "Deploy" und warte auf die Fertigstellung (etwa 2-3 Minuten)</p>
+                </div>
+                
+                <div class="success">
+                    <strong>✓ Live!</strong> Deine Website ist nun verfügbar unter:
+                    <code>https://ganglefinanzierung.vercel.app</code>
+                </div>
+            </div>
+            
+            <!-- Features -->
+            <div class="section">
+                <h2>✨ Features der Website</h2>
+                <ul style="margin-left: 20px; line-height: 2;">
+                    <li>📊 <strong>Interaktive Diagramme</strong> - Bar Charts und Pie Charts für Kostenverteilung</li>
+                    <li>💰 <strong>Detaillierte Tabellen</strong> - Alle Kosten nach Partei aufgeschlüsselt</li>
+                    <li>🎨 <strong>Modernes Design</strong> - Professionelle und benutzerfreundliche Oberfläche</li>
+                    <li>📱 <strong>Responsive</strong> - Funktioniert perfekt auf Desktop, Tablet und Mobile</li>
+                    <li>🔄 <strong>Live Updates</strong> - Änderungen in der Datenquelle automatisch sichtbar</li>
+                </ul>
+            </div>
+            
+            <!-- Weitere Schritte -->
+            <div class="section">
+                <h2>📋 Weitere Schritte</h2>
+                
+                <h3>1. Custom Domain (optional)</h3>
+                <p>Im Vercel Dashboard unter Settings → Domains kannst du eine eigene Domain verbinden.</p>
+                
+                <h3>2. Automatische Updates</h3>
+                <p>Nach dem Setup werden automatische Deployments bei jedem Push zu GitHub durchgeführt.</p>
+                
+                <h3>3. Excel-Daten aktualisieren</h3>
+                <div class="code-block">
+node scripts/parseExcel.js
+git add lib/financingData.json
+git commit -m "Update financing data"
+git push origin main
+                </div>
+                <p>Vercel wird automatisch die neue Version deployen.</p>
+            </div>
+            
+            <!-- Local Development -->
+            <div class="section">
+                <h2>💻 Lokale Entwicklung</h2>
+                
+                <p>Um die Website lokal zu entwickeln:</p>
+                
+                <div class="code-block">
+cd "c:\Users\tinur\OneDrive\Hausbauen\Stockwerkeigentum_Finanzierung\ganglefinanzierung"
+
+# Development Server starten
+npm run dev
+
+# Browser öffnen auf http://localhost:3000
+                </div>
+                
+                <p>Hot-Reload funktioniert automatisch - speichern = sofort sichtbar!</p>
+            </div>
+            
+            <!-- Hilfreiche Links -->
+            <div class="section">
+                <h2>🔗 Hilfreiche Links</h2>
+                <div class="links">
+                    <a href="https://github.com/new" target="_blank" class="link-btn">GitHub New Repo</a>
+                    <a href="https://vercel.com/new" target="_blank" class="link-btn">Vercel New Project</a>
+                    <a href="https://nextjs.org/docs" target="_blank" class="link-btn">Next.js Docs</a>
+                    <a href="https://tailwindcss.com/docs" target="_blank" class="link-btn">Tailwind Docs</a>
+                </div>
+            </div>
+            
+            <!-- Troubleshooting -->
+            <div class="section">
+                <h2>🔧 Troubleshooting</h2>
+                
+                <div class="warning">
+                    <strong>⚠️ Git Push funktioniert nicht?</strong>
+                    <p>Überprüfe, dass du entweder dein GitHub-Passwort eingegeben hast oder einen Personal Access Token verwendest. Normale Passwörter funktionieren nicht mehr.</p>
+                </div>
+                
+                <div class="warning">
+                    <strong>⚠️ Vercel Build-Fehler?</strong>
+                    <p>Überprüfe die Logs im Vercel Dashboard unter "Deployments". Häufig liegt es an fehlenden Dependencies.</p>
+                </div>
+                
+                <div class="info">
+                    <strong>ℹ️ Port 3000 schon in Nutzung?</strong>
+                    <code>npm run dev -- -p 3001</code>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Gängle Finanzierung © 2026 | Setup Guide v1.0</p>
+            <p style="margin-top: 10px; font-size: 0.9em;">
+                Für Fragen oder Probleme: Siehe DEPLOYMENT.md oder TROUBLESHOOTING.md
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

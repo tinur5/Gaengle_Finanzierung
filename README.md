@@ -1,36 +1,91 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+﻿# Gängle Finanzierung
 
-## Getting Started
+Moderne Webseite zur Visualisierung der Finanzierung eines 3-Parteien Stockwerkeigentums.
 
-First, run the development server:
+## 🚀 Quick Start
 
+### Lokal testen
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Öffne http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Production Build
+```bash
+npm run build
+npm start
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📊 Features
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- ✅ **Interaktive Charts** - Bar und Pie Charts mit Recharts
+- ✅ **Detaillierte Tabellen** - Kostenaufschlüsselung nach Partei
+- ✅ **Moderne UI** - Tailwind CSS Design
+- ✅ **Responsive** - Funktioniert auf allen Geräten
+- ✅ **Deutsch** - Vollständig auf Deutsch
 
-## Learn More
+## 🏗️ Technologie
 
-To learn more about Next.js, take a look at the following resources:
+- **Next.js 16** - React Framework
+- **Tailwind CSS** - Styling
+- **Recharts** - Datenvisualisierung
+- **TypeScript** - Typsicherheit
+- **Vercel** - Hosting & Deployment
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📁 Struktur
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+├── app/              # Next.js App Router
+├── components/       # React Komponenten
+├── lib/              # Utilities & Typen
+├── public/           # Statische Dateien
+├── scripts/          # Build-Skripte
+└── README.md         # Diese Datei
+```
 
-## Deploy on Vercel
+## 🔧 Entwicklung
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Dependencies installieren
+```bash
+npm install
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Neue Abhängigkeiten hinzufügen
+```bash
+npm install <package-name>
+```
+
+### Linter ausführen
+```bash
+npm run lint
+```
+
+## 📈 Daten aktualisieren
+
+Excel-Daten in JSON konvertieren:
+```bash
+node scripts/parseExcel.js
+```
+
+## 🌐 Deployment
+
+### GitHub
+```bash
+git remote add origin https://github.com/YOUR_USERNAME/ganglefinanzierung.git
+git push -u origin main
+```
+
+### Vercel
+1. Gehe zu [vercel.com](https://vercel.com)
+2. "New Project" → GitHub Repository auswählen
+3. Deploy!
+
+Siehe auch: [DEPLOYMENT.md](./DEPLOYMENT.md) und [SETUP_GUIDE.html](./SETUP_GUIDE.html)
+
+## 📝 Lizenz
+
+Privat
+
+## 📞 Kontakt
+
+Gängle Finanzierung Team
