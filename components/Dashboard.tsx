@@ -1,6 +1,5 @@
-'use client';
+﻿'use client';
 
-import { parties } from '@/lib/types';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 export default function Dashboard() {
@@ -36,24 +35,21 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 p-8">
+    <div className="min-h-screen bg-white p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-12">
-          <h1 className="text-4xl font-bold text-white mb-2">Gängle Finanzierung</h1>
-          <p className="text-gray-300 text-lg">3-Parteien Stockwerkeigentum - Finanzierungsübersicht</p>
-          <p className="text-amber-400 text-2xl font-bold mt-4">Gesamtkosten: {formatCurrency(totalCost)}</p>
+        <div className="mb-12 bg-gradient-to-r from-blue-600 to-blue-800 p-8 rounded-lg text-white">
+          <h1 className="text-4xl font-bold mb-2">Gängle Finanzierung</h1>
+          <p className="text-blue-100 text-lg">3-Parteien Stockwerkeigentum - Finanzierungsübersicht</p>
+          <p className="text-yellow-300 text-2xl font-bold mt-4">Gesamtkosten: {formatCurrency(totalCost)}</p>
         </div>
 
         {/* Parteien-Übersicht */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           {partyTotals.map((party, idx) => (
-            <div key={party.name} className="bg-white rounded-lg shadow-lg p-6">
+            <div key={party.name} className="bg-white rounded-lg shadow-lg p-6 border-l-4" style={{ borderLeftColor: COLORS[idx] }}>
               <div className="flex items-center gap-3 mb-2">
-                <div
-                  className="w-4 h-4 rounded-full"
-                  style={{ backgroundColor: COLORS[idx] }}
-                />
+                <div className="w-4 h-4 rounded-full" style={{ backgroundColor: COLORS[idx] }} />
                 <h3 className="text-xl font-bold text-gray-800">{party.name}</h3>
               </div>
               <p className="text-3xl font-bold text-gray-900">{formatCurrency(party.value)}</p>
@@ -145,7 +141,7 @@ export default function Dashboard() {
         </div>
 
         {/* Footer */}
-        <div className="mt-12 text-center text-gray-300 text-sm">
+        <div className="mt-12 text-center text-gray-500 text-sm">
           <p>Gängle Finanzierung © 2026</p>
         </div>
       </div>
