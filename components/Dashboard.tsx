@@ -245,7 +245,7 @@ const Dashboard = () => {
                 type="number"
                 value={kaufpreis}
                 onChange={(e) => setKaufpreis(Number(e.target.value))}
-                className="w-full px-4 py-2 border-2 border-gray-400 rounded-lg focus:outline-none focus:border-blue-600"
+                className="w-full px-4 py-2 border-2 border-gray-400 rounded-lg text-gray-900 font-semibold focus:outline-none focus:border-blue-600"
               />
             </div>
             <div>
@@ -255,7 +255,7 @@ const Dashboard = () => {
                 step="0.1"
                 value={zinssatz}
                 onChange={(e) => setZinssatz(Number(e.target.value))}
-                className="w-full px-4 py-2 border-2 border-gray-400 rounded-lg focus:outline-none focus:border-blue-600"
+                className="w-full px-4 py-2 border-2 border-gray-400 rounded-lg text-gray-900 font-semibold focus:outline-none focus:border-blue-600"
               />
             </div>
             <div>
@@ -266,7 +266,7 @@ const Dashboard = () => {
                 min="0.1"
                 value={amortisationsrate}
                 onChange={(e) => setAmortisationsrate(Number(e.target.value))}
-                className="w-full px-4 py-2 border-2 border-gray-400 rounded-lg focus:outline-none focus:border-blue-600"
+                className="w-full px-4 py-2 border-2 border-gray-400 rounded-lg text-gray-900 font-semibold focus:outline-none focus:border-blue-600"
               />
               <p className="text-xs text-gray-900 mt-1">Amortisationsjahre: {Math.round(amortisationJahre)}</p>
             </div>
