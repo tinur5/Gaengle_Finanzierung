@@ -30,7 +30,7 @@ const COLORS = ['#3b82f6', '#10b981', '#f59e0b'];
 
 const Dashboard = () => {
   const [costPositions, setCostPositions] = useState<CostItem[]>([]);
-  const [kaufpreis, setKaufpreis] = useState(6566232);
+
   const [zinssatz, setZinssatz] = useState(0.8);
   const [amortisationsrate, setAmortisationsrate] = useState(1);
   
@@ -71,7 +71,8 @@ const Dashboard = () => {
     loadData();
   }, []);
 
-  // Berechne Totals pro Partei
+  // Berechne Totals pro Partei - und Kaufpreis aus Summe aller Kostenpositionen
+  const kaufpreis = costPositions.reduce((sum, item) => sum + item.Total, 0);
   const totalWetli = costPositions.reduce((sum, item) => sum + item.Wetli, 0);
   const totalGraf = costPositions.reduce((sum, item) => sum + item.Graf, 0);
   const totalBürzle = costPositions.reduce((sum, item) => sum + item.Bürzle, 0);
@@ -499,3 +500,5 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
+
