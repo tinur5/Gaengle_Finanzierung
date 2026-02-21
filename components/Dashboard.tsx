@@ -1,103 +1,259 @@
-﻿'use client';
+'use client';
 
 import { useState, useEffect } from 'react';
+import {
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
 
 interface CostItem {
-  Pos?: string;
-  Beschreibung?: string;
-  Total?: number;
-  Wetli?: number;
-  Graf?: number;
-  Bürzle?: number;
+  Pos: number;
+  Beschreibung: string;
+  Total: number;
+  Wetli: number;
+  Graf: number;
+  Bürzle: number;
 }
 
-export default function Dashboard() {
-  const [costData, setCostData] = useState<CostItem[]>([]);
+const COLORS = ['#3b82f6', '#10b981', '#f59e0b'];
+
+const Dashboard = () => {
+  const [costPositions, setCostPositions] = useState<CostItem[]>([]);
+  const [kaufpreis, setKaufpreis] = useState(6566232);
+  const [eigenkapital, setEigenkapital] = useState(2500000);
+  const [zinssatz, setZinssatz] = useState(1.5);
+  const [amortisationJahre, setAmortisationJahre] = useState(25);
   
-  // Finanzierungs-Parameter
-  const [kaufpreis, setKaufpreis] = useState(6500000); // CHF
-  const [eigenkapital, setEigenkapital] = useState(20); // %
-  const [zinssatz, setZinssatz] = useState(2.5); // %
-  const [amortisationJahre, setAmortisationJahre] = useState(25); // Jahre
-  const [maklergebuhr, setMaklergebuhr] = useState(2); // %
-  
-  // Berechnete Werte
-  const eigenkapitalCHF = kaufpreis * (eigenkapital / 100);
-  const hypoCHF = kaufpreis - eigenkapitalCHF;
-  const maklerCHF = kaufpreis * (maklergebuhr / 100);
-  
-  // Monatliche Kosten
-  const monatlicheZinsen = hypoCHF * (zinssatz / 100) / 12;
-  const monatlicheAmortisation = hypoCHF / (amortisationJahre * 12);
-  const monatlicheHypothek = monatlicheZinsen + monatlicheAmortisation;
-  const jaehrlicheHypothek = monatlicheHypothek * 12;
-  
-  // Kostendaten laden
+  // Nebenkosten pro Partei (monatlich)
+  const [nebenKostenWetli, setNebenKostenWetli] = useState(150);
+  const [nebenKostenGraf, setNebenKostenGraf] = useState(150);
+  const [nebenKostenBürzle, setNebenKostenBürzle] = useState(200);
+
+  // Lade Daten beim Mount
   useEffect(() => {
     const loadData = async () => {
       try {
         const response = await fetch('/api/financingData');
         const data = await response.json();
-        setCostData(data);
+        
+        if (Array.isArray(data)) {
+          // Transformiere die Daten
+          const transformed = data.map((item: any, idx: number) => ({
+            Pos: item.Pos || idx + 1,
+            Beschreibung: item.Beschreibung || item.description || 'Position ' + (idx + 1),
+            Total: parseFloat(item.Total || item.total || 0),
+            Wetli: parseFloat(item.Wetli || item.wetli || 0),
+            Graf: parseFloat(item.Graf || item.graf || 0),
+            Bürzle: parseFloat(item.Bürzle || item.burzle || item.bürzle || 0),
+          }));
+          
+          setCostPositions(transformed);
+        } else {
+          console.error('Ungültige Datenformat:', data);
+          setCostPositions([]);
+        }
       } catch (error) {
-        console.error('Fehler beim Laden der Daten:', error);
+        console.error('Fehler beim Laden der Finanzierungsdaten:', error);
+        setCostPositions([]);
       }
     };
+
     loadData();
   }, []);
 
-  // Gesamtkosten aus Excel-Daten
-  const totalCost = costData.reduce((sum, item) => sum + (item.Total || 0), 0);
+  // Berechne Totals pro Partei
+  const totalWetli = costPositions.reduce((sum, item) => sum + item.Wetli, 0);
+  const totalGraf = costPositions.reduce((sum, item) => sum + item.Graf, 0);
+  const totalBürzle = costPositions.reduce((sum, item) => sum + item.Bürzle, 0);
+  const totalCost = kaufpreis;
 
-  const formatCurrency = (value: number) => {
+  // Hypothek berechnen
+  const hypoCHF = kaufpreis - eigenkapital;
+  const monatlicheHypothek = hypoCHF > 0 ? (hypoCHF / amortisationJahre) / 12 + (hypoCHF * (zinssatz / 100)) / 12 : 0;
+
+  // Monatliche Kosten pro Partei
+  const monatlichWetli = (monatlicheHypothek * (totalWetli / totalCost)) + nebenKostenWetli;
+  const monatlichGraf = (monatlicheHypothek * (totalGraf / totalCost)) + nebenKostenGraf;
+  const monatlichBürzle = (monatlicheHypothek * (totalBürzle / totalCost)) + nebenKostenBürzle;
+
+  // 50-Jahres-Prognose generieren
+  const generateCostForecast = () => {
+    const data = [];
+    for (let jahr = 0; jahr <= 50; jahr++) {
+      const restHypothek = Math.max(0, hypoCHF - (hypoCHF / amortisationJahre) * jahr);
+      const zinsJahr = restHypothek * (zinssatz / 100);
+      const amortisationJahr = Math.min(hypoCHF / amortisationJahre, hypoCHF - restHypothek + (hypoCHF / amortisationJahre) * jahr);
+      const hypothekJahr = zinsJahr + amortisationJahr;
+      
+      const monatlichWetliJahr = (hypothekJahr / 12 * (totalWetli / totalCost)) + nebenKostenWetli;
+      const monatlichGrafJahr = (hypothekJahr / 12 * (totalGraf / totalCost)) + nebenKostenGraf;
+      const monatlichBürzleJahr = (hypothekJahr / 12 * (totalBürzle / totalCost)) + nebenKostenBürzle;
+      
+      data.push({
+        jahr,
+        wetli: Math.round(monatlichWetliJahr * 100) / 100,
+        graf: Math.round(monatlichGrafJahr * 100) / 100,
+        bürzle: Math.round(monatlichBürzleJahr * 100) / 100,
+        total: Math.round((monatlichWetliJahr + monatlichGrafJahr + monatlichBürzleJahr) * 100) / 100,
+      });
+    }
+    return data;
+  };
+
+  const costForecast = generateCostForecast();
+
+  const formatCurrency = (value: number): string => {
     return new Intl.NumberFormat('de-CH', {
       style: 'currency',
       currency: 'CHF',
       minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
     }).format(value);
   };
 
+  const pieData = [
+    { name: 'Wetli', value: totalWetli },
+    { name: 'Graf', value: totalGraf },
+    { name: 'Bürzle', value: totalBürzle },
+  ];
+
+  if (costPositions.length === 0) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+            <p className="text-gray-600 mb-4">Laden der Daten...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-white p-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-12 bg-gradient-to-r from-blue-600 to-blue-800 p-8 rounded-lg text-white">
-          <h1 className="text-4xl font-bold mb-2">Gängle Finanzierung</h1>
-          <p className="text-blue-100 text-lg">3-Parteien Stockwerkeigentum - Finanzierungsübersicht</p>
-          <p className="text-yellow-300 text-2xl font-bold mt-4">Gesamtkosten: {formatCurrency(totalCost)}</p>
+        {/* Titel */}
+        <div className="mb-12 text-center">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">Gängle Finanzierung</h1>
+          <p className="text-gray-600">Finanzierungsrechner für 3er-Stockwerkeigentum</p>
         </div>
 
-        {/* Finanzierungs-Parameter */}
-        <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg shadow-lg p-8 mb-12 border-2 border-blue-200">
+        {/* SECTION 1: Immobilienwert-Übersicht */}
+        <div className="bg-white rounded-lg shadow-lg p-8 mb-12 border-2 border-gray-300">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6">Immobilienwert-Übersicht</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            <div>
+              <div className="bg-blue-50 rounded-lg p-4 mb-4 border-2 border-blue-400">
+                <p className="text-xs font-bold text-gray-600">Wetli</p>
+                <p className="text-2xl font-bold text-blue-600">{formatCurrency(totalWetli)}</p>
+              </div>
+              <div className="bg-green-50 rounded-lg p-4 mb-4 border-2 border-green-400">
+                <p className="text-xs font-bold text-gray-600">Graf</p>
+                <p className="text-2xl font-bold text-green-600">{formatCurrency(totalGraf)}</p>
+              </div>
+              <div className="bg-amber-50 rounded-lg p-4 border-2 border-amber-400">
+                <p className="text-xs font-bold text-gray-600">Bürzle</p>
+                <p className="text-2xl font-bold text-amber-600">{formatCurrency(totalBürzle)}</p>
+              </div>
+            </div>
+            <div className="flex justify-center items-center">
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={pieData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ name, value }) => `${name}: ${formatCurrency(value)}`}
+                    outerRadius={100}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {COLORS.map((color, index) => (
+                      <Cell key={`cell-${index}`} fill={color} />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+          <div className="bg-gradient-to-r from-blue-50 to-amber-50 rounded-lg p-6 border-2 border-gray-400">
+            <p className="text-sm font-bold text-gray-600 mb-1">Gesamtimmobilienwert</p>
+            <p className="text-3xl font-bold text-gray-900">{formatCurrency(totalCost)}</p>
+          </div>
+        </div>
+
+        {/* SECTION 2: Kostenaufstellung */}
+        <div className="bg-white rounded-lg shadow-lg p-8 mb-12 border-2 border-gray-300">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6">Kostenaufstellung ({costPositions.length} Positionen)</h2>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-gray-200 border-b-2 border-gray-400">
+                  <th className="text-left p-3 font-bold">Pos.</th>
+                  <th className="text-left p-3 font-bold">Beschreibung</th>
+                  <th className="text-right p-3 font-bold">Total</th>
+                  <th className="text-right p-3 font-bold bg-blue-100">Wetli</th>
+                  <th className="text-right p-3 font-bold bg-green-100">Graf</th>
+                  <th className="text-right p-3 font-bold bg-amber-100">Bürzle</th>
+                </tr>
+              </thead>
+              <tbody>
+                {costPositions.map((item, index) => (
+                  <tr key={item.Pos} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                    <td className="p-3 font-bold">{item.Pos}</td>
+                    <td className="p-3">{item.Beschreibung}</td>
+                    <td className="text-right p-3 font-semibold">{formatCurrency(item.Total)}</td>
+                    <td className="text-right p-3 text-blue-600 font-semibold bg-blue-50">{formatCurrency(item.Wetli)}</td>
+                    <td className="text-right p-3 text-green-600 font-semibold bg-green-50">{formatCurrency(item.Graf)}</td>
+                    <td className="text-right p-3 text-amber-600 font-semibold bg-amber-50">{formatCurrency(item.Bürzle)}</td>
+                  </tr>
+                ))}
+                <tr className="bg-gray-300 font-bold border-t-2 border-gray-400">
+                  <td colSpan={2} className="p-3">TOTAL</td>
+                  <td className="text-right p-3">{formatCurrency(totalCost)}</td>
+                  <td className="text-right p-3 bg-blue-100">{formatCurrency(totalWetli)}</td>
+                  <td className="text-right p-3 bg-green-100">{formatCurrency(totalGraf)}</td>
+                  <td className="text-right p-3 bg-amber-100">{formatCurrency(totalBürzle)}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* SECTION 3: Finanzierungs-Parameter */}
+        <div className="bg-white rounded-lg shadow-lg p-8 mb-12 border-2 border-gray-300">
           <h2 className="text-2xl font-bold text-gray-800 mb-6">Finanzierungs-Parameter</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-            {/* Kaufpreis */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-2">Kaufpreis (CHF)</label>
               <input
                 type="number"
                 value={kaufpreis}
                 onChange={(e) => setKaufpreis(Number(e.target.value))}
-                className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none"
+                className="w-full px-4 py-2 border-2 border-gray-400 rounded-lg focus:outline-none focus:border-blue-600"
               />
-              <p className="text-xs text-gray-500 mt-1">{formatCurrency(kaufpreis)}</p>
             </div>
-
-            {/* Eigenkapital % */}
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2">Eigenkapital (%)</label>
+              <label className="block text-sm font-bold text-gray-700 mb-2">Eigenkapital (CHF)</label>
               <input
                 type="number"
-                step="0.1"
                 value={eigenkapital}
                 onChange={(e) => setEigenkapital(Number(e.target.value))}
-                className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none"
+                className="w-full px-4 py-2 border-2 border-gray-400 rounded-lg focus:outline-none focus:border-blue-600"
               />
-              <p className="text-xs text-gray-500 mt-1">{formatCurrency(eigenkapitalCHF)}</p>
             </div>
-
-            {/* Zinssatz */}
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-2">Zinssatz (%)</label>
               <input
@@ -105,138 +261,248 @@ export default function Dashboard() {
                 step="0.1"
                 value={zinssatz}
                 onChange={(e) => setZinssatz(Number(e.target.value))}
-                className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none"
+                className="w-full px-4 py-2 border-2 border-gray-400 rounded-lg focus:outline-none focus:border-blue-600"
               />
-              <p className="text-xs text-gray-500 mt-1">CHF {monatlicheZinsen.toFixed(0)}/Monat</p>
             </div>
-
-            {/* Amortisation Jahre */}
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2">Amortisation (Jahre)</label>
+              <label className="block text-sm font-bold text-gray-700 mb-2">Amortisationsjahre</label>
               <input
                 type="number"
                 value={amortisationJahre}
                 onChange={(e) => setAmortisationJahre(Number(e.target.value))}
-                className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none"
+                className="w-full px-4 py-2 border-2 border-gray-400 rounded-lg focus:outline-none focus:border-blue-600"
               />
-              <p className="text-xs text-gray-500 mt-1">CHF {monatlicheAmortisation.toFixed(0)}/Monat</p>
-            </div>
-
-            {/* Maklergebühr */}
-            <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2">Makler (%)</label>
-              <input
-                type="number"
-                step="0.1"
-                value={maklergebuhr}
-                onChange={(e) => setMaklergebuhr(Number(e.target.value))}
-                className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none"
-              />
-              <p className="text-xs text-gray-500 mt-1">{formatCurrency(maklerCHF)}</p>
             </div>
           </div>
-        </div>
 
-        {/* Finanzierungs-Übersicht */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg shadow p-6 border-l-4 border-blue-600">
-            <p className="text-sm text-gray-600 mb-1">Eigenkapital</p>
-            <p className="text-2xl font-bold text-blue-600">{formatCurrency(eigenkapitalCHF)}</p>
-            <p className="text-xs text-gray-500 mt-2">{eigenkapital.toFixed(1)}% des Kaufpreises</p>
-          </div>
-
-          <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg shadow p-6 border-l-4 border-green-600">
-            <p className="text-sm text-gray-600 mb-1">Hypothek</p>
-            <p className="text-2xl font-bold text-green-600">{formatCurrency(hypoCHF)}</p>
-            <p className="text-xs text-gray-500 mt-2">{(100 - eigenkapital).toFixed(1)}% des Kaufpreises</p>
-          </div>
-
-          <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg shadow p-6 border-l-4 border-purple-600">
-            <p className="text-sm text-gray-600 mb-1">Monatliche Hypothek</p>
-            <p className="text-2xl font-bold text-purple-600">{formatCurrency(monatlicheHypothek)}</p>
-            <p className="text-xs text-gray-500 mt-2">Zinsen + Amortisation</p>
-          </div>
-
-          <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg shadow p-6 border-l-4 border-orange-600">
-            <p className="text-sm text-gray-600 mb-1">Jährliche Hypothek</p>
-            <p className="text-2xl font-bold text-orange-600">{formatCurrency(jaehrlicheHypothek)}</p>
-            <p className="text-xs text-gray-500 mt-2">12 x monatliche Rate</p>
-          </div>
-        </div>
-
-        {/* Parteien-Übersicht */}
-        {costData.length > 0 && (
-          <>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-              {[
-                { name: 'Wetli', color: '#3b82f6', share: 0.271 },
-                { name: 'Graf', color: '#10b981', share: 0.271 },
-                { name: 'Bürzle', color: '#f59e0b', share: 0.457 }
-              ].map((party) => (
-                <div key={party.name} className="bg-white rounded-lg shadow-lg p-6 border-l-4" style={{ borderLeftColor: party.color }}>
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="w-4 h-4 rounded-full" style={{ backgroundColor: party.color }} />
-                    <h3 className="text-xl font-bold text-gray-800">{party.name}</h3>
-                  </div>
-                  <p className="text-3xl font-bold text-gray-900">{formatCurrency(totalCost * party.share)}</p>
-                  <p className="text-sm text-gray-500 mt-2">{(party.share * 100).toFixed(1)}% der Gesamtkosten</p>
-                  <p className="text-xs text-blue-600 font-bold mt-3">Hypothek-Anteil: {formatCurrency(hypoCHF * party.share)}</p>
-                </div>
-              ))}
+          {/* Berechnete Werte */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div className="bg-blue-50 rounded-lg p-4 border-2 border-blue-400">
+              <p className="text-xs font-bold text-gray-600">Hypothek</p>
+              <p className="text-2xl font-bold text-blue-600">{formatCurrency(hypoCHF)}</p>
             </div>
+            <div className="bg-green-50 rounded-lg p-4 border-2 border-green-400">
+              <p className="text-xs font-bold text-gray-600">Eigenkapitalquote</p>
+              <p className="text-2xl font-bold text-green-600">{((eigenkapital / kaufpreis) * 100).toFixed(1)}%</p>
+            </div>
+            <div className="bg-blue-50 rounded-lg p-4 border-2 border-blue-400">
+              <p className="text-xs font-bold text-gray-600">Monatliche Hypothek</p>
+              <p className="text-2xl font-bold text-blue-600">{formatCurrency(monatlicheHypothek)}</p>
+            </div>
+          </div>
 
-            {/* Kosten-Tabelle */}
-            <div className="bg-white rounded-lg shadow-lg p-6 mb-12">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">Detaillierte Kostenübersicht</h2>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b-2 border-gray-200 bg-gray-50">
-                      <th className="text-left py-3 px-4 font-bold text-gray-700">Pos</th>
-                      <th className="text-left py-3 px-4 font-bold text-gray-700">Beschreibung</th>
-                      <th className="text-right py-3 px-4 font-bold text-gray-700">Total</th>
-                      <th className="text-right py-3 px-4 font-bold text-blue-600">Wetli (27.1%)</th>
-                      <th className="text-right py-3 px-4 font-bold text-green-600">Graf (27.1%)</th>
-                      <th className="text-right py-3 px-4 font-bold text-amber-600">Bürzle (45.7%)</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {costData.slice(0, 30).map((item, idx) => (
-                      <tr key={idx} className={idx % 2 === 0 ? 'bg-gray-50' : ''}>
-                        <td className="py-3 px-4 text-gray-600">{item.Pos}</td>
-                        <td className="py-3 px-4 text-gray-800">{item.Beschreibung}</td>
-                        <td className="text-right py-3 px-4 font-bold text-gray-900">{formatCurrency(item.Total || 0)}</td>
-                        <td className="text-right py-3 px-4 text-blue-600">{formatCurrency((item.Wetli || 0))}</td>
-                        <td className="text-right py-3 px-4 text-green-600">{formatCurrency((item.Graf || 0))}</td>
-                        <td className="text-right py-3 px-4 text-amber-600">{formatCurrency((item.Bürzle || 0))}</td>
-                      </tr>
-                    ))}
-                    <tr className="border-t-2 border-gray-200 bg-gray-100 font-bold">
-                      <td className="py-3 px-4 text-gray-900" colSpan={2}>SUMME</td>
-                      <td className="text-right py-3 px-4 text-gray-900">{formatCurrency(totalCost)}</td>
-                      <td className="text-right py-3 px-4 text-blue-600">{formatCurrency(totalCost * 0.271)}</td>
-                      <td className="text-right py-3 px-4 text-green-600">{formatCurrency(totalCost * 0.271)}</td>
-                      <td className="text-right py-3 px-4 text-amber-600">{formatCurrency(totalCost * 0.457)}</td>
-                    </tr>
-                  </tbody>
-                </table>
+          {/* Nebenkosten pro Partei */}
+          <div className="bg-gradient-to-br from-gray-50 to-white rounded-lg p-6 border-2 border-gray-400">
+            <h3 className="text-lg font-bold text-gray-800 mb-4">Nebenkosten (monatlich pro Partei)</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div>
+                <label className="block text-sm font-bold text-blue-600 mb-2">Wetli (CHF/Monat)</label>
+                <input
+                  type="number"
+                  value={nebenKostenWetli}
+                  onChange={(e) => setNebenKostenWetli(Number(e.target.value))}
+                  className="w-full px-4 py-2 border-2 border-blue-400 bg-blue-50 text-gray-900 font-semibold rounded-lg focus:border-blue-600 focus:outline-none"
+                />
+                <p className="text-xs text-gray-600 mt-2">Jährlich: {formatCurrency(nebenKostenWetli * 12)}</p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-green-600 mb-2">Graf (CHF/Monat)</label>
+                <input
+                  type="number"
+                  value={nebenKostenGraf}
+                  onChange={(e) => setNebenKostenGraf(Number(e.target.value))}
+                  className="w-full px-4 py-2 border-2 border-green-400 bg-green-50 text-gray-900 font-semibold rounded-lg focus:border-green-600 focus:outline-none"
+                />
+                <p className="text-xs text-gray-600 mt-2">Jährlich: {formatCurrency(nebenKostenGraf * 12)}</p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-amber-600 mb-2">Bürzle (CHF/Monat)</label>
+                <input
+                  type="number"
+                  value={nebenKostenBürzle}
+                  onChange={(e) => setNebenKostenBürzle(Number(e.target.value))}
+                  className="w-full px-4 py-2 border-2 border-amber-400 bg-amber-50 text-gray-900 font-semibold rounded-lg focus:border-amber-600 focus:outline-none"
+                />
+                <p className="text-xs text-gray-600 mt-2">Jährlich: {formatCurrency(nebenKostenBürzle * 12)}</p>
               </div>
             </div>
-          </>
-        )}
-
-        {/* Loading State */}
-        {costData.length === 0 && (
-          <div className="bg-white rounded-lg shadow-lg p-12 text-center">
-            <p className="text-gray-500">Laden der Daten...</p>
           </div>
-        )}
+        </div>
+
+        {/* SECTION 4: Jährliche Kosten und Monatliche Kosten */}
+        <div className="bg-white rounded-lg shadow-lg p-8 mb-12 border-2 border-gray-300">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6">Kostenübersicht (monatlich)</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-blue-50 rounded-lg p-6 border-2 border-blue-400">
+              <h3 className="text-sm font-bold text-blue-600 mb-3">WETLI</h3>
+              <div className="mb-4">
+                <p className="text-xs text-gray-600">Hypothek anteil:</p>
+                <p className="text-lg font-bold text-blue-600">{formatCurrency((monatlicheHypothek * (totalWetli / totalCost)))}</p>
+              </div>
+              <div className="mb-4 pb-4 border-b-2 border-blue-300">
+                <p className="text-xs text-gray-600">Nebenkosten:</p>
+                <p className="text-lg font-bold text-blue-600">{formatCurrency(nebenKostenWetli)}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-600 mb-1">Total monatlich:</p>
+                <p className="text-2xl font-bold text-blue-700">{formatCurrency(monatlichWetli)}</p>
+              </div>
+            </div>
+
+            <div className="bg-green-50 rounded-lg p-6 border-2 border-green-400">
+              <h3 className="text-sm font-bold text-green-600 mb-3">GRAF</h3>
+              <div className="mb-4">
+                <p className="text-xs text-gray-600">Hypothek anteil:</p>
+                <p className="text-lg font-bold text-green-600">{formatCurrency((monatlicheHypothek * (totalGraf / totalCost)))}</p>
+              </div>
+              <div className="mb-4 pb-4 border-b-2 border-green-300">
+                <p className="text-xs text-gray-600">Nebenkosten:</p>
+                <p className="text-lg font-bold text-green-600">{formatCurrency(nebenKostenGraf)}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-600 mb-1">Total monatlich:</p>
+                <p className="text-2xl font-bold text-green-700">{formatCurrency(monatlichGraf)}</p>
+              </div>
+            </div>
+
+            <div className="bg-amber-50 rounded-lg p-6 border-2 border-amber-400">
+              <h3 className="text-sm font-bold text-amber-600 mb-3">BÜRZLE</h3>
+              <div className="mb-4">
+                <p className="text-xs text-gray-600">Hypothek anteil:</p>
+                <p className="text-lg font-bold text-amber-600">{formatCurrency((monatlicheHypothek * (totalBürzle / totalCost)))}</p>
+              </div>
+              <div className="mb-4 pb-4 border-b-2 border-amber-300">
+                <p className="text-xs text-gray-600">Nebenkosten:</p>
+                <p className="text-lg font-bold text-amber-600">{formatCurrency(nebenKostenBürzle)}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-600 mb-1">Total monatlich:</p>
+                <p className="text-2xl font-bold text-amber-700">{formatCurrency(monatlichBürzle)}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* SECTION 5: 50-Jahre Kostenentwicklung */}
+        <div className="bg-white rounded-lg shadow-lg p-8 mb-12 border-2 border-gray-300">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6">Entwicklung der monatlichen Kosten (50 Jahre)</h2>
+          
+          {/* LineChart Grafik */}
+          <div className="bg-gray-50 rounded-lg p-6 mb-8 border border-gray-300">
+            <h3 className="text-lg font-bold text-gray-700 mb-4">Kostentrend Grafik</h3>
+            <ResponsiveContainer width="100%" height={500}>
+              <LineChart 
+                data={costForecast} 
+                margin={{ top: 20, right: 60, left: 80, bottom: 60 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                <XAxis
+                  dataKey="jahr"
+                  label={{ value: 'Jahre', position: 'bottom', offset: 20, fontSize: 12, fontWeight: 'bold' }}
+                  tick={{ fontSize: 11 }}
+                />
+                <YAxis
+                  label={{ value: 'CHF/Monat', angle: -90, position: 'left', offset: 20, fontSize: 12, fontWeight: 'bold' }}
+                  tick={{ fontSize: 11 }}
+                  width={70}
+                />
+                <Tooltip
+                  formatter={(value: number) => formatCurrency(value)}
+                  labelFormatter={(label: number) => `Jahr ${label}`}
+                  contentStyle={{
+                    backgroundColor: '#ffffff',
+                    border: '2px solid #333',
+                    borderRadius: '8px',
+                    padding: '10px',
+                    fontSize: '12px',
+                  }}
+                />
+                <Legend 
+                  wrapperStyle={{ paddingTop: '20px' }}
+                  iconType="line"
+                />
+                <Line
+                  type="linear"
+                  dataKey="wetli"
+                  stroke="#3b82f6"
+                  strokeWidth={3}
+                  name="Wetli"
+                  dot={false}
+                  isAnimationActive={false}
+                />
+                <Line
+                  type="linear"
+                  dataKey="graf"
+                  stroke="#10b981"
+                  strokeWidth={3}
+                  name="Graf"
+                  dot={false}
+                  isAnimationActive={false}
+                />
+                <Line
+                  type="linear"
+                  dataKey="bürzle"
+                  stroke="#f59e0b"
+                  strokeWidth={3}
+                  name="Bürzle"
+                  dot={false}
+                  isAnimationActive={false}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Detaillierte Tabelle */}
+          <div className="mb-8">
+            <h3 className="text-lg font-bold text-gray-700 mb-4">Monatliche Kosten nach Jahren</h3>
+            <div className="overflow-y-auto max-h-96 border-2 border-gray-300 rounded-lg">
+              <table className="w-full text-sm">
+                <thead className="sticky top-0 bg-gray-300 border-b-2 border-gray-400">
+                  <tr>
+                    <th className="text-left p-3 font-bold">Jahr</th>
+                    <th className="text-right p-3 font-bold bg-blue-100">Wetli (CHF)</th>
+                    <th className="text-right p-3 font-bold bg-green-100">Graf (CHF)</th>
+                    <th className="text-right p-3 font-bold bg-amber-100">Bürzle (CHF)</th>
+                    <th className="text-right p-3 font-bold bg-gray-200">Total (CHF)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {costForecast.map((item, index) => (
+                    <tr key={item.jahr} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                      <td className="p-3 font-bold text-gray-800">{item.jahr}</td>
+                      <td className="text-right p-3 text-blue-600 font-semibold bg-blue-50">{formatCurrency(item.wetli)}</td>
+                      <td className="text-right p-3 text-green-600 font-semibold bg-green-50">{formatCurrency(item.graf)}</td>
+                      <td className="text-right p-3 text-amber-600 font-semibold bg-amber-50">{formatCurrency(item.bürzle)}</td>
+                      <td className="text-right p-3 font-bold text-gray-800 bg-gray-100">{formatCurrency(item.total)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Erklärung */}
+          <div className="bg-gradient-to-r from-blue-50 via-green-50 to-amber-50 rounded-lg p-6 border-2 border-gray-400">
+            <h3 className="font-bold text-gray-800 mb-2">📊 Erklärung der Grafik und Tabelle:</h3>
+            <ul className="text-sm text-gray-700 space-y-2 list-disc list-inside">
+              <li><strong>Grafik:</strong> Zeigt visuell, wie die monatlichen Kosten pro Partei über 50 Jahre sinken</li>
+              <li><strong>Sinkender Trend:</strong> Die Kosten fallen, weil die Hypothek durch Amortisation abgebaut wird</li>
+              <li><strong>Nebenkosten-Basis:</strong> Die Mindestkosten sind die monatlichen Nebenkosten</li>
+              <li><strong>Tabelle:</strong> Exakte monatliche Kosten für jedes einzelne Jahr (alle 51 Datenpunkte)</li>
+              <li><strong>Scrollbar:</strong> Da 51 Jahre angezeigt werden, können Sie in der Tabelle scrollen</li>
+            </ul>
+          </div>
+        </div>
 
         {/* Footer */}
-        <div className="mt-12 text-center text-gray-500 text-sm">
-          <p>Gängle Finanzierung © 2026</p>
+        <div className="text-center text-gray-600 text-sm mt-12">
+          <p>Gängle Finanzierung © 2024 - Alle Angaben ohne Gewähr</p>
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default Dashboard;
