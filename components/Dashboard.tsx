@@ -212,20 +212,20 @@ const Dashboard = () => {
               <tbody>
                 {costPositions.map((item, index) => (
                   <tr key={item.Pos} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                    <td className="p-3 font-bold">{item.Pos}</td>
-                    <td className="p-3">{item.Beschreibung}</td>
-                    <td className="text-right p-3 font-semibold">{formatCurrency(item.Total)}</td>
+                    <td className="p-3 font-bold text-gray-900">{item.Pos}</td>
+                    <td className="p-3 text-gray-900 font-medium">{item.Beschreibung}</td>
+                    <td className="text-right p-3 font-semibold text-gray-900">{formatCurrency(item.Total)}</td>
                     <td className="text-right p-3 text-blue-600 font-semibold bg-blue-50">{formatCurrency(item.Wetli)}</td>
                     <td className="text-right p-3 text-green-600 font-semibold bg-green-50">{formatCurrency(item.Graf)}</td>
                     <td className="text-right p-3 text-amber-600 font-semibold bg-amber-50">{formatCurrency(item.Bürzle)}</td>
                   </tr>
                 ))}
                 <tr className="bg-gray-300 font-bold border-t-2 border-gray-400">
-                  <td colSpan={2} className="p-3">TOTAL</td>
-                  <td className="text-right p-3">{formatCurrency(totalCost)}</td>
-                  <td className="text-right p-3 bg-blue-100">{formatCurrency(totalWetli)}</td>
-                  <td className="text-right p-3 bg-green-100">{formatCurrency(totalGraf)}</td>
-                  <td className="text-right p-3 bg-amber-100">{formatCurrency(totalBürzle)}</td>
+                  <td colSpan={2} className="p-3 text-gray-900">TOTAL</td>
+                  <td className="text-right p-3 text-gray-900">{formatCurrency(totalCost)}</td>
+                  <td className="text-right p-3 text-gray-900 bg-blue-100">{formatCurrency(totalWetli)}</td>
+                  <td className="text-right p-3 text-gray-900 bg-green-100">{formatCurrency(totalGraf)}</td>
+                  <td className="text-right p-3 text-gray-900 bg-amber-100">{formatCurrency(totalBürzle)}</td>
                 </tr>
               </tbody>
             </table>
