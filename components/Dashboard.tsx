@@ -90,10 +90,13 @@ const Dashboard = () => {
   // 50-Jahres-Prognose generieren
   const generateCostForecast = () => {
     const data = [];
+    const jaehrlicheAmortisation = hypoCHF > 0 ? hypoCHF / amortisationJahre : 0;
+    
     for (let jahr = 0; jahr <= 50; jahr++) {
-      const restHypothek = Math.max(0, hypoCHF - (hypoCHF / amortisationJahre) * jahr);
+      // Nach 'amortisationJahre' Jahren ist die Hypothek abbezahlt
+      const restHypothek = jahr >= amortisationJahre ? 0 : Math.max(0, hypoCHF - jaehrlicheAmortisation * jahr);
       const zinsJahr = restHypothek * (zinssatz / 100);
-      const amortisationJahr = Math.min(hypoCHF / amortisationJahre, hypoCHF - restHypothek + (hypoCHF / amortisationJahre) * jahr);
+      const amortisationJahr = jahr >= amortisationJahre ? 0 : jaehrlicheAmortisation;
       const hypothekJahr = zinsJahr + amortisationJahr;
       
       const monatlichWetliJahr = (hypothekJahr / 12 * (totalWetli / totalCost)) + nebenKostenWetli;
