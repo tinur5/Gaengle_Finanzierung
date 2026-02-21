@@ -35,8 +35,8 @@ const Dashboard = () => {
   const [amortisationsrate, setAmortisationsrate] = useState(1);
   
   // Nebenkosten pro Partei (monatlich)
-  const [nebenKostenWetli, setNebenKostenWetli] = useState(150);
-  const [nebenKostenGraf, setNebenKostenGraf] = useState(150);
+  const [nebenKostenWetli, setNebenKostenWetli] = useState(45);
+  const [nebenKostenGraf, setNebenKostenGraf] = useState(45);
   const [nebenKostenBürzle, setNebenKostenBürzle] = useState(200);
 
   // Lade Daten beim Mount
